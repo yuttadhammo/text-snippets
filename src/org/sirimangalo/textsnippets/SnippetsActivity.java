@@ -31,22 +31,27 @@ public class SnippetsActivity extends ListActivity {
 	private ArrayAdapter<Snippet> adapter;
 	private String TAG = "SnippetsActivity";
 	private Activity activity;
+	protected Intent refreshIntent;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		activity = this;
+		refreshIntent = new Intent(SnippetWidgetProvider.REFRESH_ACTION);
 	}
 	@Override
 	public void onResume(){
 		super.onResume();
 	    datasource = new SnippetsDataSource(this);
 	    datasource.open();
-
 		Bundle extras = getIntent().getExtras();
-		if(extras != null && extras.containsKey(Intent.EXTRA_TEXT))
-			showSnippetDialog(extras.getCharSequence(Intent.EXTRA_TEXT).toString());
+		if(extras != null) {
+			if (extras.containsKey(Intent.EXTRA_TEXT))
+				showSnippetDialog(extras.getCharSequence(Intent.EXTRA_TEXT).toString());
+			else if (extras.containsKey("new_snippet"))
+				showSnippetDialog("");
+		}
 
 		resetListView();
     	registerForContextMenu(getListView());
@@ -92,6 +97,7 @@ public class SnippetsActivity extends ListActivity {
 		    	Snippet snippet = datasource.createSnippet(snippetView.getText().toString(),commentView.getText().toString());
 				adapter.add(snippet);
 				adapter.notifyDataSetChanged();
+				activity.sendBroadcast(refreshIntent);
 				hideKeyboard(ll);
 		    }
 		}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -155,6 +161,7 @@ public class SnippetsActivity extends ListActivity {
 				    	snippet.setSnippet(snippetView.getText().toString(),commentView.getText().toString());
 				    	datasource.editSnippet(snippet);
 				    	resetListView();
+						sendBroadcast(refreshIntent);
 						hideKeyboard(ll);
 				    }
 				}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -167,6 +174,7 @@ public class SnippetsActivity extends ListActivity {
 		    	datasource.deleteSnippet(snippet);
 				adapter.remove(snippet);
 				adapter.notifyDataSetChanged();
+				sendBroadcast(refreshIntent);
 				return true;				
 			case R.id.share:
 				Intent i = new Intent(Intent.ACTION_SEND);
@@ -178,11 +186,13 @@ public class SnippetsActivity extends ListActivity {
 				final Snippet prevSnippet = (Snippet) getListView().getItemAtPosition(index-1);
 				datasource.switchSnippets(snippet, prevSnippet);
 				resetListView();
+				sendBroadcast(refreshIntent);
 				return true;				
 			case R.id.move_down:
 				final Snippet nextSnippet = (Snippet) getListView().getItemAtPosition(index+1);
 				datasource.switchSnippets(snippet, nextSnippet);
 				resetListView();
+				sendBroadcast(refreshIntent);
 				return true;				
 			default:
 				break;

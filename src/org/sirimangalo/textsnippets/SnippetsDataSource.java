@@ -77,6 +77,11 @@ public class SnippetsDataSource {
 		return snippets;
 	}
 
+	public Cursor getAllSnippetsCursor() {
+		return database.query(MySQLiteHelper.TABLE_SNIPPETS,
+				allColumns, null, null, null, null, null);
+	}
+	
 	private Snippet cursorToSnippet(Cursor cursor) {
 		Snippet snippet = new Snippet();
 		snippet.setId(cursor.getLong(0));

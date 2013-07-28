@@ -7,4 +7,6 @@
 	<dimen name="app_defaultsize_h">500.0dip</dimen>
 	<dimen name="app_minimumsize_w">400.0dip</dimen>
 	<dimen name="app_minimumsize_h">500.0dip</dimen>
+
+	<dimen name="widget_padding">8dip</dimen>
 </resources>

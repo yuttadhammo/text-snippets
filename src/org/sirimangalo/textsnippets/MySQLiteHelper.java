@@ -3,9 +3,11 @@ package org.sirimangalo.textsnippets;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
-
+	public static final Uri URI_TABLE = 
+		    Uri.parse("sqlite://org.sirimangalo.textsnippets/snippets");
 	public static final String TABLE_SNIPPETS = "snippets";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_SNIPPET = "snippet";

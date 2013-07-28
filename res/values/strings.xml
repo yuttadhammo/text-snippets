@@ -17,5 +17,6 @@
 	<string name="move_up">Move Up</string>
 	<string name="move_down">Move Down</string>
 	<string name="copied">Snippet copied to clipboard</string>
-	
+    <string name="empty_view_text">No snippets found…</string>
+		
 </resources>
