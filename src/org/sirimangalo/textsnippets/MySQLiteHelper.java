@@ -12,8 +12,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_SNIPPET = "snippet";
 	public static final String COLUMN_COMMENT = "comment";
+    public static final Object[] dbLock = new Object[0];
 
-	private static final String DATABASE_NAME = "snippets.db";
+    private static final String DATABASE_NAME = "snippets.db";
 	private static final int DATABASE_VERSION = 2;
 
 	// Database creation sql statement

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.backup.BackupManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;

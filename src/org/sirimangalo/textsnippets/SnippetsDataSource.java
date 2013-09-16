@@ -2,6 +2,7 @@ package org.sirimangalo.textsnippets;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.backup.BackupManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -35,21 +36,28 @@ public class SnippetsDataSource {
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.COLUMN_SNIPPET, snippet);
 		values.put(MySQLiteHelper.COLUMN_COMMENT, comment);
-		long insertId = database.insert(MySQLiteHelper.TABLE_SNIPPETS, null,
-				values);
+        long insertId;
+		synchronized (MySQLiteHelper.dbLock) {
+			insertId = database.insert(MySQLiteHelper.TABLE_SNIPPETS, null,
+					values);
+        }
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_SNIPPETS,
 				allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
 				null, null, null);
 		cursor.moveToFirst();
 		Snippet newSnippet = cursorToSnippet(cursor);
 		cursor.close();
+		BackupManager.dataChanged("org.sirimangalo.textsnippets");
 		return newSnippet;
 	}
 
 	public void deleteSnippet(Snippet snippet) {
 		long id = snippet.getId();
-		database.delete(MySQLiteHelper.TABLE_SNIPPETS, MySQLiteHelper.COLUMN_ID
-				+ " = " + id, null);
+		synchronized (MySQLiteHelper.dbLock) {
+			database.delete(MySQLiteHelper.TABLE_SNIPPETS, MySQLiteHelper.COLUMN_ID
+					+ " = " + id, null);
+		}
+		BackupManager.dataChanged("org.sirimangalo.textsnippets");
 	}
 
 	public void editSnippet(Snippet snippet) {
@@ -57,7 +65,10 @@ public class SnippetsDataSource {
 			values.put(MySQLiteHelper.COLUMN_ID, snippet.getId());
 			values.put(MySQLiteHelper.COLUMN_SNIPPET, snippet.getSnippet());
 			values.put(MySQLiteHelper.COLUMN_COMMENT, snippet.getComment());
-			long insertId = database.replace(MySQLiteHelper.TABLE_SNIPPETS, null, values);
+			synchronized (MySQLiteHelper.dbLock) {
+				database.replace(MySQLiteHelper.TABLE_SNIPPETS, null, values);
+			}
+			BackupManager.dataChanged("org.sirimangalo.textsnippets");
 	}
 	
 	public List<Snippet> getAllSnippets() {
